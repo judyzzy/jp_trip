@@ -1,0 +1,22 @@
+---
+title: "Japanese Prefectures"
+author: "Judy Zhang"
+date: "2022-09-02"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r load_data, echo=F}
+df <- read.table("japan_prefecture_latlng.csv", header=TRUE,sep=",")
+```
+```{r map, echo=F}
+library(leaflet)
+m <- leaflet(data = df) %>% addTiles() %>%
+  addMarkers(~long, ~lat, popup = ~as.character(prefecture_en), label = ~as.character(prefecture))
+m  # Print the map
+```
+
