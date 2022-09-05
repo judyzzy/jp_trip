@@ -1,0 +1,48 @@
+---
+title: "Japanese Hostels"
+author: "Judy Zhang"
+date: "2022-09-05"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE)
+```
+
+## Japanese Hostels
+
+Visualizing Japanese hostels in preparation for a vacation. 
+Data from [Stone Sha](https://gist.github.com/stonesha/180e4bde2a0798302f5e491d5a92825e).
+
+
+## Plotting Hostel Qualities in Each City
+
+```{r load, warning=FALSE}
+library(dplyr)
+df <- read.table("japanese_hostels.csv", header=TRUE,sep=",")
+df_count <- df %>% count(city, rating_band)
+df_count <- df_count %>% filter(city != "")
+df_count_wide <- reshape( df_count,
+                          idvar = c("city"),
+                          timevar = "rating_band",
+                          v.names = "n",
+                          direction = "wide"
+                          )
+df_count_wide[is.na(df_count_wide)] <- 0
+colnames(df_count_wide) <- c("city", "fab", "sup", "vg", "good")
+```
+
+```{r plot}
+library(plotly)
+colors <- c("#e5c07b", "#98c379", "#56b6c2", "#61afef")
+fig <- plot_ly(df_count_wide, x = ~city, y = ~good, type = 'bar', name = 'Good',  marker = list(color = colors[1]))
+fig <- fig %>% add_trace(y = ~vg, name = "Very Good", marker = list(color = colors[2]))
+fig <- fig %>% add_trace(y = ~fab, name = "Fabulous", marker = list(color = colors[3]))
+fig <- fig %>% add_trace(y = ~sup, name = "Superb", marker = list(color = colors[4]))
+fig <- fig %>% layout(yaxis = list(title = 'Count'), barmode = 'stack' )
+fig
+```
+
+## Thank you!
+Hope this makes the trip planning a bit easier
+
